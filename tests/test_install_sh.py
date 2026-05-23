@@ -21,7 +21,7 @@ def test_install_sh_exists_executable_and_posix_syntax():
 def test_install_sh_dry_run_creates_skill_link(tmp_path, monkeypatch):
     target_dir = tmp_path / "fakeclaude" / "skills"
     target_dir.mkdir(parents=True)
-    stale_dest = tmp_path / ".local" / "share" / "mark-the-stuff-down"
+    stale_dest = tmp_path / ".local" / "share" / "mark-all-the-shit-down"
     (stale_dest / "tests").mkdir(parents=True)
     (stale_dest / ".git").mkdir()
     monkeypatch.setenv("HOME", str(tmp_path))
@@ -32,13 +32,17 @@ def test_install_sh_dry_run_creates_skill_link(tmp_path, monkeypatch):
     r = subprocess.run(["sh", str(INSTALL), "--no-uv"], capture_output=True, text=True)
 
     assert r.returncode == 0, r.stderr
-    link = target_dir / "mark-the-stuff-down"
+    link = target_dir / "mark-all-the-shit-down"
     assert link.exists()
     assert link.is_symlink()
     assert (link / "convert.py").is_file()
+    assert (link / "ocr.py").is_file()
     assert (link / "SKILL.md").is_file()
     assert (link / "README.md").is_file()
     assert (link / "LICENSE").is_file()
+    assert (link / "tessdata" / "rus.traineddata").is_file()
+    assert (link / "tessdata" / "eng.traineddata").is_file()
+    assert (link / "tessdata" / "osd.traineddata").is_file()
     assert not (link / "tests").exists()
     assert not (link / ".git").exists()
     assert not (link / "requirements-dev.txt").exists()
@@ -74,4 +78,8 @@ def test_install_sh_installs_runtime_files_only():
     text = INSTALL.read_text(encoding="utf-8")
     assert "RUNTIME_FILES=" in text
     assert "install_runtime_from_source" in text
+    assert "ocr.py" in text
+    assert "tessdata/rus.traineddata" in text
+    assert "tessdata/eng.traineddata" in text
+    assert "tessdata/osd.traineddata" in text
     assert 'cp -R "$SOURCE_DIR"/.' not in text

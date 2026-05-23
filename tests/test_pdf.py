@@ -1,7 +1,9 @@
 import sys
+import shutil
 from pathlib import Path
 
 import pypdf
+import pytest
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
@@ -53,11 +55,36 @@ def test_dispatch_pdf_simple(run_convert, tmp_copy):
     assert "Меморандум" in md.read_text(encoding="utf-8")
 
 
-def test_dispatch_pdf_scanned_errors(run_convert, tmp_copy):
+@pytest.mark.ocr
+def test_dispatch_pdf_scanned_converts_via_ocr(run_convert, tmp_copy):
+    """Scanned PDFs are no longer a hard error; they OCR successfully."""
+    if not shutil.which("tesseract"):
+        pytest.skip("tesseract not on PATH")
+    if not shutil.which("pdftoppm"):
+        pytest.skip("pdftoppm not on PATH")
     src = tmp_copy(CORPUS / "Контракт от 25.05 — окончательная редакция.pdf")
     r = run_convert(src, env={"MTSD_FORCE_PREINSTALLED": "1"})
+    assert r.returncode == 0, r.stderr
+    md = src.with_suffix(".md")
+    body = md.read_text(encoding="utf-8")
+    first = body.splitlines()[0]
+    assert first.startswith("<!-- mark-all-the-shit-down v0.1.0 ")
+    assert "backend: tesseract-ocr" in first
+    assert "## Page 1" in body
+
+
+def test_dispatch_pdf_scanned_without_tesseract_is_ocr_failed(
+    run_convert, tmp_copy, tmp_path
+):
+    """When tesseract is unavailable, surface ocr-failed, not scanned-pdf."""
+    src = tmp_copy(CORPUS / "Контракт от 25.05 — окончательная редакция.pdf")
+    r = run_convert(
+        src,
+        env={"MTSD_FORCE_PREINSTALLED": "1", "PATH": str(tmp_path)},
+    )
     assert r.returncode == 1
-    assert "ERROR scanned-pdf" in r.stderr
+    assert "ERROR ocr-failed" in r.stderr
+    assert "scanned-pdf" not in r.stderr
 
 
 def test_dispatch_pdf_corrupt_errors_as_corrupted(run_convert, tmp_path):

@@ -7,5 +7,7 @@
     "Бумага А4",
     "Картриджи"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

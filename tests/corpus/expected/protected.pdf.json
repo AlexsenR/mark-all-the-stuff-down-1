@@ -3,5 +3,7 @@
   "error_type": "protected",
   "min_markdown_length": 0,
   "required_substrings": [],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

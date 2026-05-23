@@ -37,8 +37,9 @@ esac
 
 DRY_RUN=${MTSD_DRY_RUN:-0}
 SOURCE_DIR=${MTSD_SOURCE:-}
-DEST=$HOME/.local/share/mark-the-stuff-down
+DEST=$HOME/.local/share/mark-all-the-shit-down
 RUNTIME_FILES="convert.py
+ocr.py
 SKILL.md
 README.md
 LICENSE"
@@ -62,6 +63,17 @@ install_runtime_from_source() {
       exit 1
     fi
     cp "$src/$file" "$DEST/$file"
+  done
+  if [ ! -d "$src/tessdata" ]; then
+    echo "ERROR: missing tessdata directory" >&2
+    exit 1
+  fi
+  cp -R "$src/tessdata" "$DEST/tessdata"
+  for f in ocr.py tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
+    if [ ! -f "$DEST/$f" ]; then
+      echo "ERROR: post-install check failed; missing $DEST/$f" >&2
+      exit 1
+    fi
   done
 }
 
@@ -88,7 +100,7 @@ if [ -n "$SOURCE_DIR" ]; then
 else
   mkdir -p "$(dirname "$DEST")"
   TMP_SOURCE=$(mktemp -d)
-  git clone --depth 1 https://github.com/strigov/mark-the-shit-down "$TMP_SOURCE"
+  git clone --depth 1 https://github.com/strigov/mark-all-the-shit-down "$TMP_SOURCE"
   install_runtime_from_source "$TMP_SOURCE"
 fi
 
@@ -126,7 +138,7 @@ fi
 printf '%s\n' "$CANDIDATES" | while IFS= read -r d; do
   [ -n "$d" ] || continue
   mkdir -p "$d"
-  target=$d/mark-the-stuff-down
+  target=$d/mark-all-the-shit-down
   if [ -L "$target" ] || [ -e "$target" ]; then
     rm -rf "$target"
   fi
@@ -186,4 +198,4 @@ PY
   fi
 fi
 
-echo "mark-the-stuff-down installed"
+echo "mark-all-the-shit-down installed"

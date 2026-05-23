@@ -22,7 +22,7 @@ def test_install_ps1_links_skill_with_junction():
     text = INSTALL_PS1.read_text(encoding="utf-8")
     assert "New-Item" in text
     assert "Junction" in text
-    assert "mark-the-stuff-down" in text
+    assert "mark-all-the-shit-down" in text
 
 
 def test_install_ps1_contains_prewarm_and_smoke_test():
@@ -58,8 +58,11 @@ def test_install_ps1_installs_runtime_files_only():
     text = INSTALL_PS1.read_text(encoding="utf-8")
     assert "$RuntimeFiles" in text
     assert "Install-RuntimeFromSource" in text
-    for name in ("convert.py", "SKILL.md", "README.md", "LICENSE"):
+    for name in ("convert.py", "ocr.py", "SKILL.md", "README.md", "LICENSE"):
         assert f'"{name}"' in text
+    assert "tessdata\\rus.traineddata" in text
+    assert "tessdata\\eng.traineddata" in text
+    assert "tessdata\\osd.traineddata" in text
     assert 'Copy-Item -Recurse -Force (Join-Path $SourceOverride "*") $Dest' not in text
 
 

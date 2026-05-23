@@ -27,15 +27,23 @@ PROBE_PAGES = 3
 SCANNED_PDF_TEXT_THRESHOLD = 50  # chars/page average
 
 SUPPORTED_EXTS = {
+    ".bmp",
     ".docx",
     ".epub",
     ".html",
+    ".jpeg",
+    ".jpg",
     ".pdf",
+    ".png",
     ".pptx",
     ".rtf",
+    ".tif",
+    ".tiff",
     ".xls",
     ".xlsx",
+    ".webp",
 }
+IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".tiff", ".tif", ".bmp", ".webp"}
 UNSUPPORTED_DOC = {".doc"}
 
 CHILD_ENV = {
@@ -671,6 +679,14 @@ def dispatch(src: Path, *, no_uv: bool) -> tuple[str, str]:
         return _do_html(src, use_uv)
     if ext in {".xls", ".rtf", ".epub"}:
         return _do_markitdown_only(src, use_uv, ext.lstrip("."))
+    if ext in IMAGE_EXTS:
+        from ocr import OcrError, convert_image
+
+        try:
+            body, backend = convert_image(src)
+        except OcrError as e:
+            raise ConversionError(e.kind, e.message) from e
+        return body, backend
     raise ConversionError("unsupported", f"format {ext} not in MVP scope")
 
 
@@ -701,12 +717,13 @@ def _do_pdf(src: Path, use_uv: bool) -> tuple[str, str]:
     except BackendUnavailable as e:
         raise ConversionError("install-failed", "pdf requires pdfplumber") from e
     if info.is_scanned:
-        raise ConversionError(
-            "scanned-pdf",
-            "no text layer in PDF. STOP: do not attempt OCR, install tesseract, "
-            "or call a vision model on your own. Surface this error to the user "
-            "and wait for an explicit instruction on how to proceed.",
-        )
+        from ocr import OcrError, convert_pdf_scanned
+
+        try:
+            body, backend = convert_pdf_scanned(src, info.total_pages)
+        except OcrError as e:
+            raise ConversionError(e.kind, e.message) from e
+        return body, backend
 
     if info.complexity == "complex":
         if use_uv:

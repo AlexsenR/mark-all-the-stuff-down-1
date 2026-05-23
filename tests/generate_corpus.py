@@ -29,6 +29,8 @@ def _expected(name: str, **kw):
         "min_markdown_length": kw.get("min_markdown_length", 0),
         "required_substrings": kw.get("required_substrings", []),
         "forbidden_substrings": kw.get("forbidden_substrings", []),
+        "backend": kw.get("backend"),
+        "requires_ocr": kw.get("requires_ocr", False),
     }
     (EXP / f"{name}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -223,8 +225,9 @@ def _pdf_scanned():
     c.save()
     _expected(
         "Контракт от 25.05 — окончательная редакция.pdf",
-        exit_code=1,
-        error_type="scanned-pdf",
+        exit_code=0,
+        backend="tesseract-ocr",
+        requires_ocr=True,
     )
 
 

@@ -1,6 +1,6 @@
-# mark-the-stuff-down
+# mark-all-the-shit-down
 
-Лёгкий конвертер офисных документов в Markdown — скилл для AI-агентов (Claude Code, Codex CLI, pi.dev, Claude.ai).
+Лёгкий конвертер офисных документов и изображений в Markdown — скилл для AI-агентов (Claude Code, Codex CLI, pi.dev, Claude.ai).
 
 ## Зачем
 
@@ -8,11 +8,17 @@
 
 ## Поддерживаемые форматы
 
-DOCX, PDF (с текстовым слоем), XLSX, XLS, PPTX, RTF, HTML, EPUB. Лимит 50 МБ.
+DOCX, PDF, XLSX, XLS, PPTX, RTF, HTML, EPUB, PNG, JPG, JPEG, TIFF, TIF, BMP, WEBP. Лимит 50 МБ.
+
+## OCR
+
+Сканированные PDF и изображения конвертируются локально через `tesseract` с языками `rus+eng`. Файлы `tessdata/rus.traineddata`, `tessdata/eng.traineddata` и `tessdata/osd.traineddata` поставляются вместе со скиллом, поэтому системный `tessdata` не нужен. Для `.webp` используется runtime fallback через Pillow; если Pillow отсутствует, конвертация `.webp` завершается понятной ошибкой `ERROR install-failed`.
 
 ## Требования
 
 - Python 3.10, 3.11 или 3.12.
+- `tesseract` на `PATH` для OCR.
+- `pdftoppm` для OCR сканированных PDF.
 - macOS/Linux: `uv` рекомендуется; установщик поставит его при необходимости.
 - Windows: достаточно Python и `pip`.
 
@@ -20,24 +26,24 @@ DOCX, PDF (с текстовым слоем), XLSX, XLS, PPTX, RTF, HTML, EPUB. 
 
 **macOS / Linux:**
 ```sh
-curl -LsSf https://raw.githubusercontent.com/strigov/mark-the-shit-down/main/install.sh | sh
+curl -LsSf https://raw.githubusercontent.com/strigov/mark-all-the-shit-down/main/install.sh | sh
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/strigov/mark-the-shit-down/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/strigov/mark-all-the-shit-down/main/install.ps1 | iex
 ```
 
-Установщик кладёт в каталог скилла только runtime-файлы (`SKILL.md`, `convert.py`, `README.md`, `LICENSE`). Тесты, fixtures и dev-файлы остаются только в репозитории.
+Установщик кладёт в каталог скилла только runtime-файлы (`SKILL.md`, `convert.py`, `ocr.py`, `README.md`, `LICENSE`, `tessdata/`). Тесты, fixtures и dev-файлы остаются только в репозитории.
 
-**Claude.ai (UI):** скачать последний `mark-the-stuff-down-vX.Y.Z.skill` из [Releases](https://github.com/strigov/mark-the-shit-down/releases) и загрузить в Settings → Capabilities → Skills.
+**Claude.ai (UI):** скачать последний `mark-all-the-shit-down-vX.Y.Z.skill` из [Releases](https://github.com/strigov/mark-all-the-shit-down/releases) и загрузить в Settings -> Capabilities -> Skills.
 
 ## Использование
 
 Агент вызывает скрипт автоматически, когда вы прикладываете документ. Вручную:
 ```sh
 python convert.py file.docx
-# → /абсолютный/путь/file.md (47.3 KB)
+# -> /абсолютный/путь/file.md (47.3 KB)
 ```
 
 Несколько файлов можно передать за один запуск; они конвертируются параллельно:
@@ -60,10 +66,12 @@ python convert.py --jobs 4 file1.docx file2.pdf file3.xlsx
 
 | stderr | Что делать |
 |---|---|
-| `ERROR scanned-pdf` | PDF без текстового слоя. Скилл намеренно не делает OCR/vision и не ставит tesseract — попросите отправителя дать текстовую версию или явно запустите отдельный OCR-пайплайн |
+| `WARN ocr-low-confidence` | OCR завершился, но медианная уверенность ниже 60%; проверьте Markdown перед использованием |
+| `ERROR ocr-failed` | Не найден/упал `tesseract` или `pdftoppm`, либо отсутствует bundled `tessdata/`; проверьте установку |
+| `ERROR install-failed: webp requires Pillow` | Для `.webp` нет Pillow; установите Pillow или используйте другой формат изображения |
 | `ERROR too-large` | Лимит 50 МБ; разделите файл |
 | `ERROR install-failed: <format>` | Нет интернета и формат не в pre-installed bundle; запустите `install.sh` ещё раз |
-| `ERROR protected` | Защищённый XLSX; попросите копию без защиты |
+| `ERROR protected` | Защищённый файл; попросите копию без защиты |
 | `ERROR unsupported: .doc legacy` | Пересохраните в `.docx` |
 
 ## Лицензия

@@ -6,5 +6,7 @@
     "Договор №1",
     "ООО «Альфа»"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

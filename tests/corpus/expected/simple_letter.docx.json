@@ -6,5 +6,7 @@
     "Letter to Counterparty",
     "Dear Sir"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

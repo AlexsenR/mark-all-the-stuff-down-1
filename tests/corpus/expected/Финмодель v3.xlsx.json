@@ -7,5 +7,7 @@
     "Заголовок таблицы",
     "Выручка"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

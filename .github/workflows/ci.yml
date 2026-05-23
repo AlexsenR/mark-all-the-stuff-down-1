@@ -42,6 +42,20 @@ jobs:
       - name: Quick smoke
         run: python convert.py --version
 
+      - name: Install tesseract (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-rus poppler-utils
+
+      - name: Grep — old names absent from convert.py
+        shell: bash
+        run: |
+          set -e
+          ! grep -n 'mark-the-stuff-down' convert.py
+          ! grep -nE '(^|[^-])mark-the-shit-down' convert.py
+          ! grep -n '0\.2\.0' convert.py
+
       - name: Run tests
         run: python -m pytest -q
 
@@ -65,6 +79,12 @@ jobs:
       - name: Generate corpus
         run: python tests/generate_corpus.py
 
+      - name: Install tesseract (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-rus poppler-utils
+
       - name: Run tests
         run: python -m pytest -q -m "not online"
 
@@ -86,6 +106,12 @@ jobs:
 
       - name: Generate corpus
         run: python tests/generate_corpus.py
+
+      - name: Install tesseract (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-rus poppler-utils
 
       - name: Run tests
         run: python -m pytest -q -m "not online"
@@ -148,18 +174,50 @@ jobs:
 
       - name: Build release .skill / .zip bundle
         run: |
+          set -euo pipefail
           mkdir -p dist
           staging=$(mktemp -d)
-          pkg="$staging/mark-the-stuff-down"
+          pkg="$staging/mark-all-the-shit-down"
           mkdir -p "$pkg"
-          cp convert.py SKILL.md LICENSE README.md "$pkg/"
-          (cd "$staging" && zip -r "mark-the-stuff-down-${TAG_NAME}.skill" mark-the-stuff-down)
-          mv "$staging/mark-the-stuff-down-${TAG_NAME}.skill" dist/
-          cp "dist/mark-the-stuff-down-${TAG_NAME}.skill" "dist/mark-the-stuff-down-${TAG_NAME}.zip"
+          cp convert.py ocr.py SKILL.md LICENSE README.md "$pkg/"
+          cp -R tessdata "$pkg/tessdata"
+          for f in convert.py ocr.py SKILL.md LICENSE README.md \
+                   tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
+            test -f "$pkg/$f" || { echo "MISSING IN STAGING: $f"; exit 1; }
+          done
+          (cd "$staging" && zip -r "mark-all-the-shit-down-${TAG_NAME}.skill" mark-all-the-shit-down)
+          mv "$staging/mark-all-the-shit-down-${TAG_NAME}.skill" dist/
+          cp "dist/mark-all-the-shit-down-${TAG_NAME}.skill" "dist/mark-all-the-shit-down-${TAG_NAME}.zip"
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/mark-the-stuff-down-*.skill
-            dist/mark-the-stuff-down-*.zip
+            dist/mark-all-the-shit-down-*.skill
+            dist/mark-all-the-shit-down-*.zip
+
+  verify-bundle:
+    name: verify-bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replay release-skill staging and verify contents
+        run: |
+          set -euo pipefail
+          staging=$(mktemp -d)
+          pkg="$staging/mark-all-the-shit-down"
+          mkdir -p "$pkg"
+          cp convert.py ocr.py SKILL.md LICENSE README.md "$pkg/"
+          cp -R tessdata "$pkg/tessdata"
+          for f in convert.py ocr.py SKILL.md LICENSE README.md \
+                   tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
+            test -f "$pkg/$f" || { echo "MISSING IN BUNDLE: $f"; exit 1; }
+          done
+          (cd "$staging" && zip -qr bundle.zip mark-all-the-shit-down)
+          unzip -q "$staging/bundle.zip" -d "$staging/unpacked"
+          for f in convert.py ocr.py SKILL.md LICENSE README.md \
+                   tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
+            test -f "$staging/unpacked/mark-all-the-shit-down/$f" \
+              || { echo "MISSING AFTER ROUND-TRIP: $f"; exit 1; }
+          done
+          echo "Bundle OK"

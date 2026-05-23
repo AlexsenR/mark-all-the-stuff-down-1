@@ -13,8 +13,24 @@ def test_skill_md_frontmatter_has_name_and_paths():
     assert text.startswith("---\n"), "must start with YAML frontmatter"
     end = text.index("\n---\n", 4)
     fm = text[4:end]
-    assert "name: mark-the-stuff-down" in fm
-    for ext in (".docx", ".pdf", ".xlsx", ".xls", ".pptx", ".rtf", ".html", ".epub"):
+    assert "name: mark-all-the-shit-down" in fm
+    for ext in (
+        ".docx",
+        ".pdf",
+        ".xlsx",
+        ".xls",
+        ".pptx",
+        ".rtf",
+        ".html",
+        ".epub",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".tiff",
+        ".tif",
+        ".bmp",
+        ".webp",
+    ):
         assert f'"*{ext}"' in fm, f"missing path pattern for {ext}"
 
 

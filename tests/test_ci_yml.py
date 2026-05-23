@@ -46,7 +46,9 @@ def test_ci_yml_release_skill_job_on_tags():
     assert push["tags"] == ["v*"]
     flat = CI.read_text(encoding="utf-8")
     assert "softprops/action-gh-release" in flat
-    assert "mark-the-stuff-down-*.skill" in flat
-    assert "mark-the-stuff-down-*.zip" in flat
-    for name in ("convert.py", "SKILL.md", "LICENSE", "README.md"):
+    assert "mark-all-the-shit-down-*.skill" in flat
+    assert "mark-all-the-shit-down-*.zip" in flat
+    for name in ("convert.py", "ocr.py", "SKILL.md", "LICENSE", "README.md"):
         assert name in flat
+    assert "tessdata" in flat
+    assert "verify-bundle" in data["jobs"]

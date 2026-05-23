@@ -1,7 +1,7 @@
 ---
 slug: mark-all-the-shit-down-mvp
 created: 2026-05-24
-status: in-progress
+status: done
 phases:
   - id: Ф1
     scope: "Fork base: copy original skill, apply rename diffs, baseline tests green"
@@ -14,7 +14,7 @@ phases:
     status: done
   - id: Ф4
     scope: "Wire OCR into convert.py + update SKILL.md, installers, CI, integration tests"
-    status: in-progress
+    status: done
 ---
 
 # mark-all-the-shit-down Implementation Plan

@@ -10,5 +10,7 @@
     "The image depicts",
     "A photo of",
     "На изображении"
-  ]
+  ],
+  "backend": null,
+  "requires_ocr": false
 }

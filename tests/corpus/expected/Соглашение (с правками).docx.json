@@ -7,5 +7,7 @@
     "Сторона А",
     "Пункт 1"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

@@ -7,5 +7,7 @@
     "## Неустойка",
     "=A2+B2"
   ],
-  "forbidden_substrings": []
+  "forbidden_substrings": [],
+  "backend": null,
+  "requires_ocr": false
 }

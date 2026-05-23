@@ -20,8 +20,8 @@ function Assert-ExitCode {
 $NoUvFlag = $NoUv.IsPresent -or ($args -contains "--no-uv")
 $DryRun = $env:MTSD_DRY_RUN -eq "1"
 $SourceOverride = $env:MTSD_SOURCE
-$Dest = Join-Path $HOME ".local\share\mark-the-stuff-down"
-$RuntimeFiles = @("convert.py", "SKILL.md", "README.md", "LICENSE")
+$Dest = Join-Path $HOME ".local\share\mark-all-the-shit-down"
+$RuntimeFiles = @("convert.py", "ocr.py", "SKILL.md", "README.md", "LICENSE")
 
 function Install-RuntimeFromSource {
   param(
@@ -39,6 +39,21 @@ function Install-RuntimeFromSource {
       throw "ERROR: missing runtime file: $file"
     }
     Copy-Item -Force $from (Join-Path $Dest $file)
+  }
+
+  $tessdata_src = Join-Path $Source "tessdata"
+  $tessdata_dst = Join-Path $Dest "tessdata"
+  if (-not (Test-Path $tessdata_src)) {
+    Write-Error "ERROR: missing tessdata directory"
+    exit 1
+  }
+  Copy-Item -Recurse $tessdata_src $tessdata_dst
+
+  foreach ($f in @("ocr.py", "tessdata\rus.traineddata", "tessdata\eng.traineddata", "tessdata\osd.traineddata")) {
+    if (-not (Test-Path (Join-Path $Dest $f))) {
+      Write-Error "post-install check failed; missing $Dest\$f"
+      exit 1
+    }
   }
 }
 
@@ -59,7 +74,7 @@ if ($SourceOverride) {
   New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Dest) | Out-Null
   $tmpSource = Join-Path ([System.IO.Path]::GetTempPath()) ("mtsd-src-" + [guid]::NewGuid())
   try {
-    git clone --depth 1 https://github.com/strigov/mark-the-shit-down $tmpSource
+    git clone --depth 1 https://github.com/strigov/mark-all-the-shit-down $tmpSource
     Assert-ExitCode "git clone"
     Install-RuntimeFromSource $tmpSource
   } finally {
@@ -96,7 +111,7 @@ if (-not $NoUvFlag -and -not (Get-Command uv -ErrorAction SilentlyContinue) -and
 
 foreach ($d in $candidates) {
   New-Item -ItemType Directory -Force -Path $d | Out-Null
-  $target = Join-Path $d "mark-the-stuff-down"
+  $target = Join-Path $d "mark-all-the-shit-down"
   if (Test-Path $target) {
     Remove-Item -Recurse -Force $target
   }
@@ -147,4 +162,4 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
   }
 }
 
-Write-Host "mark-the-stuff-down installed"
+Write-Host "mark-all-the-shit-down installed"
