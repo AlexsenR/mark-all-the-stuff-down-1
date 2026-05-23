@@ -42,6 +42,10 @@ def tmp_copy(tmp_path):
 def pytest_configure(config):
     config.addinivalue_line(
         "markers",
+        "ocr: integration tests that require the tesseract binary on PATH",
+    )
+    config.addinivalue_line(
+        "markers",
         "online: requires network and/or uv (skipped automatically when "
         "MTSD_FORCE_PREINSTALLED=1 is set on the runner shell)",
     )

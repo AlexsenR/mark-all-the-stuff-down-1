@@ -11,10 +11,10 @@ phases:
     status: done
   - id: Ф3
     scope: "Implement ocr.py module with full unit-test coverage"
-    status: in-progress
+    status: done
   - id: Ф4
     scope: "Wire OCR into convert.py + update SKILL.md, installers, CI, integration tests"
-    status: pending
+    status: in-progress
 ---
 
 # mark-all-the-shit-down Implementation Plan
