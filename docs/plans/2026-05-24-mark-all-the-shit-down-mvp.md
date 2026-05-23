@@ -5,10 +5,10 @@ status: in-progress
 phases:
   - id: Ф1
     scope: "Fork base: copy original skill, apply rename diffs, baseline tests green"
-    status: in-progress
+    status: done
   - id: Ф2
     scope: "Bundle tessdata (rus+eng+osd fast) and verify tesseract uses it"
-    status: pending
+    status: in-progress
   - id: Ф3
     scope: "Implement ocr.py module with full unit-test coverage"
     status: pending
@@ -504,7 +504,7 @@ Expected: all tests PASS. If a corpus or installer test references the old name,
 cd /Users/strigov/Documents/Claude/projects-сode/mark-all-the-shit-down
 git add convert.py SKILL.md README.md LICENSE install.sh install.ps1 \
         requirements-dev.txt .github/workflows/ci.yml tests
-git commit -m "Ф1: fork mark-the-shit-down v0.1.1 as mark-all-the-shit-down v0.1.0
+git commit -m "Ф1: fork mark-the-shit-down v0.2.0 as mark-all-the-shit-down v0.1.0
 
 Copy upstream files verbatim, apply 7 rename diffs to convert.py
 (docstring, __version__, MARKER_PREFIX, marker_line() literal,

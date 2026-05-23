@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 100,
+  "required_substrings": [
+    "Договор поставки",
+    "Бумага А4",
+    "Картриджи"
+  ],
+  "forbidden_substrings": []
+}

@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 80,
+  "required_substrings": [
+    "## Расчёт",
+    "## Неустойка",
+    "=A2+B2"
+  ],
+  "forbidden_substrings": []
+}

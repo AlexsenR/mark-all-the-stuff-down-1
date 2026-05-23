@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 60,
+  "required_substrings": [
+    "Соглашение",
+    "Сторона А",
+    "Пункт 1"
+  ],
+  "forbidden_substrings": []
+}

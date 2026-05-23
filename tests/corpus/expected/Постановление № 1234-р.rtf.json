@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 10,
+  "required_substrings": [
+    "Постановление"
+  ],
+  "forbidden_substrings": []
+}

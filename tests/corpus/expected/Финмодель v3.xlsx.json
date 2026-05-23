@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 60,
+  "required_substrings": [
+    "## Финмодель",
+    "Заголовок таблицы",
+    "Выручка"
+  ],
+  "forbidden_substrings": []
+}

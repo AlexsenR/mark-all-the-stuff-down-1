@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 20,
+  "required_substrings": [
+    "Презентация"
+  ],
+  "forbidden_substrings": [
+    "This image shows",
+    "The image depicts",
+    "A photo of",
+    "На изображении"
+  ]
+}

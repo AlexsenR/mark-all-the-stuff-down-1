@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 20,
+  "required_substrings": [
+    "Кейс",
+    "позиции"
+  ],
+  "forbidden_substrings": []
+}

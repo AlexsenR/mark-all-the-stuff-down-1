@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 30,
+  "required_substrings": [
+    "Меморандум"
+  ],
+  "forbidden_substrings": []
+}

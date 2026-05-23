@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 80,
+  "required_substrings": [
+    "Column A",
+    "Column B"
+  ],
+  "forbidden_substrings": []
+}

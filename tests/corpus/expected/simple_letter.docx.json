@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 40,
+  "required_substrings": [
+    "Letter to Counterparty",
+    "Dear Sir"
+  ],
+  "forbidden_substrings": []
+}

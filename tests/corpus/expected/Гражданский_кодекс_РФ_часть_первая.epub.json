@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "error_type": null,
+  "min_markdown_length": 20,
+  "required_substrings": [
+    "Глава 1"
+  ],
+  "forbidden_substrings": []
+}

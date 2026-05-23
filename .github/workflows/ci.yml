@@ -1,0 +1,165 @@
+name: ci
+
+"on":
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Prewarm conversion backends
+        run: |
+          uv tool install markitdown --with "markitdown[docx,xlsx,pdf,pptx,xls,html,epub]" --with pymupdf4llm --with striprtf || python -m pip install "markitdown[docx,xlsx,pdf,pptx,xls,html,epub]" pymupdf4llm striprtf
+
+      - name: Generate corpus
+        run: python tests/generate_corpus.py
+
+      - name: Quick smoke
+        run: python convert.py --version
+
+      - name: Run tests
+        run: python -m pytest -q
+
+  preinstalled-fallback:
+    name: preinstalled-fallback / py3.11
+    runs-on: ubuntu-latest
+    env:
+      MTSD_FORCE_PREINSTALLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Generate corpus
+        run: python tests/generate_corpus.py
+
+      - name: Run tests
+        run: python -m pytest -q -m "not online"
+
+  pip-fallback:
+    name: pip-fallback / py3.11
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies via pip
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install "markitdown[docx,xlsx,pdf,pptx,xls,html,epub]" pymupdf4llm striprtf
+
+      - name: Generate corpus
+        run: python tests/generate_corpus.py
+
+      - name: Run tests
+        run: python -m pytest -q -m "not online"
+
+  no-llm-smoke:
+    name: no-llm-smoke / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          uv tool install markitdown --with "markitdown[docx,xlsx,pdf,pptx,xls,html,epub]" --with pymupdf4llm --with striprtf || python -m pip install "markitdown[docx,xlsx,pdf,pptx,xls,html,epub]" pymupdf4llm striprtf
+
+      - name: Generate corpus
+        run: python tests/generate_corpus.py
+
+      - name: Install unshare
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y util-linux
+
+      - name: Run no-LLM smoke (Linux, with unshare if permitted)
+        if: runner.os == 'Linux'
+        run: |
+          if unshare -rn true 2>/dev/null; then
+            unshare -rn python -m pytest tests/test_no_llm.py -q
+          else
+            echo "::warning::unshare -rn not permitted on this runner; running without user-namespace network isolation"
+            python -m pytest tests/test_no_llm.py -q
+          fi
+
+      - name: Run no-LLM smoke
+        if: runner.os != 'Linux'
+        run: python -m pytest tests/test_no_llm.py -q
+
+  release-skill:
+    name: release-skill
+    runs-on: ubuntu-latest
+    needs: [test, preinstalled-fallback, pip-fallback, no-llm-smoke]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    env:
+      TAG_NAME: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build release .skill / .zip bundle
+        run: |
+          mkdir -p dist
+          staging=$(mktemp -d)
+          pkg="$staging/mark-the-stuff-down"
+          mkdir -p "$pkg"
+          cp convert.py SKILL.md LICENSE README.md "$pkg/"
+          (cd "$staging" && zip -r "mark-the-stuff-down-${TAG_NAME}.skill" mark-the-stuff-down)
+          mv "$staging/mark-the-stuff-down-${TAG_NAME}.skill" dist/
+          cp "dist/mark-the-stuff-down-${TAG_NAME}.skill" "dist/mark-the-stuff-down-${TAG_NAME}.zip"
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/mark-the-stuff-down-*.skill
+            dist/mark-the-stuff-down-*.zip
