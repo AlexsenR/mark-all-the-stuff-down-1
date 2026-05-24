@@ -6,6 +6,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+import convert as cv  # noqa: E402
 
 
 def _make_scanned_pdf(path: Path) -> None:
@@ -42,7 +45,7 @@ def test_scanned_pdf_converts(tmp_path):
     out_md = src.with_suffix(".md")
     assert out_md.exists()
     body = out_md.read_text(encoding="utf-8")
-    assert body.startswith("<!-- mark-all-the-stuff-down v0.1.0 ")
+    assert body.startswith(f"<!-- mark-all-the-stuff-down v{cv.__version__} ")
     assert "## Page 1" in body
     assert "backend: tesseract-ocr" in body.splitlines()[0]
 
@@ -74,7 +77,7 @@ def test_image_converts(tmp_path):
     out_md = src.with_suffix(".md")
     assert out_md.exists()
     body = out_md.read_text(encoding="utf-8")
-    assert body.startswith("<!-- mark-all-the-stuff-down v0.1.0 ")
+    assert body.startswith(f"<!-- mark-all-the-stuff-down v{cv.__version__} ")
     assert "<!-- ocr conf=" in body
     assert "## Page" not in body
     assert "backend: tesseract-ocr" in body.splitlines()[0]

@@ -45,6 +45,14 @@ def test_skill_md_instructs_batch_jobs():
     assert re.search(r"multiple|parallel|нескольк|параллел", text, re.IGNORECASE)
 
 
+def test_skill_md_instructs_long_timeout_for_ocr():
+    text = SKILL.read_text(encoding="utf-8")
+    assert "300000" in text
+    assert re.search(r"timeout", text, re.IGNORECASE)
+    assert re.search(r"OCR|scanned|image", text, re.IGNORECASE)
+    assert "--jobs 1" in text
+
+
 def test_skill_md_warns_about_doc():
     text = SKILL.read_text(encoding="utf-8")
     assert ".doc" in text and "не поддерж" in text.lower() or "not supported" in text.lower()

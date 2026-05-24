@@ -25,6 +25,7 @@ def test_marker_line_contains_version_and_mtime(tmp_path):
     assert line.startswith(f"<!-- mark-all-the-stuff-down v{cv.__version__} |")
     assert "source: Договор.pdf" in line
     assert f"source_id: {cv._source_id(src)}" in line
+    assert f"source_size: {src.stat().st_size}" in line
     assert "backend: pdfplumber" in line
     assert "mtime:" in line
     assert line.endswith("-->")
@@ -51,6 +52,18 @@ def test_compute_output_path_overwrites_own_marker(tmp_path):
     src.write_bytes(b"x")
     own = tmp_path / "Договор.md"
     own.write_text(cv.marker_line(src, "z") + "\nold\n", encoding="utf-8")
+    out = cv.compute_output_path(src)
+    assert out == tmp_path / "Договор.md"
+
+
+def test_compute_output_path_reuses_marker_from_different_resolved_path(tmp_path):
+    src = tmp_path / "Договор.pdf"
+    src.write_bytes(b"x")
+    own = tmp_path / "Договор.md"
+    marker = cv.marker_line(src, "z").replace(
+        f"source_id: {cv._source_id(src)}", "source_id: deadbeefdeadbeef"
+    )
+    own.write_text(marker + "\nold\n", encoding="utf-8")
     out = cv.compute_output_path(src)
     assert out == tmp_path / "Договор.md"
 
@@ -104,6 +117,19 @@ def test_is_up_to_date_returns_true_when_md_newer(tmp_path):
     src.write_bytes(b"x")
     md = tmp_path / "doc.md"
     md.write_text(cv.marker_line(src, "x") + "\nbody\n", encoding="utf-8")
+    os.utime(md, (time.time() + 10, time.time() + 10))
+    assert cv.is_up_to_date(src, md) is True
+
+
+def test_is_up_to_date_accepts_legacy_marker_from_different_resolved_path(tmp_path):
+    src = tmp_path / "doc.docx"
+    src.write_bytes(b"x")
+    md = tmp_path / "doc.md"
+    marker = cv.marker_line(src, "x").replace(
+        f"source_id: {cv._source_id(src)}", "source_id: deadbeefdeadbeef"
+    )
+    marker = marker.replace(f" | source_size: {src.stat().st_size}", "")
+    md.write_text(marker + "\nbody\n", encoding="utf-8")
     os.utime(md, (time.time() + 10, time.time() + 10))
     assert cv.is_up_to_date(src, md) is True
 

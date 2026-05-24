@@ -46,6 +46,8 @@ For multiple documents, pass all paths in one invocation; the converter runs the
 python /path/to/mark-all-the-stuff-down/convert.py --jobs 4 "<doc-1>" "<doc-2>" "<doc-3>"
 ```
 
+For scanned PDFs and image OCR, assume conversion can exceed the shell tool's default timeout. When the tool supports a per-command timeout, set it to at least 300000 ms. If a longer timeout is not available, run OCR-heavy inputs one at a time with `--jobs 1`, then poll/check for the produced `.md` files before reporting completion. A command timeout is not an OCR failure if the Markdown files are later created successfully.
+
 The script prints one stdout line per successfully converted file: `<abs-path-to-markdown> (<size>)`. Read those files with `Read` using `offset` and `limit`, or `grep` them. **Do not paste full documents into context.**
 
 ## OCR

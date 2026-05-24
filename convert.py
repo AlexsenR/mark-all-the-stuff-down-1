@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 MARKER_PREFIX = "<!-- mark-all-the-stuff-down v"
 MAX_BYTES = 50_000_000  # 50 MB (decimal: 1 KB = 1000 bytes)
 PROBE_PAGES = 3
@@ -117,7 +117,26 @@ def _marker_matches_source(md_path: Path, src: Path) -> bool:
             first = fh.readline().rstrip("\n")
     except OSError:
         return False
-    return _parse_marker_fields(first).get("source_id") == _source_id(src)
+    return _marker_fields_match_source(_parse_marker_fields(first), src)
+
+
+def _marker_fields_match_source(fields: dict[str, str], src: Path) -> bool:
+    if fields.get("source_id") == _source_id(src):
+        return True
+    if fields.get("source") != src.name:
+        return False
+    try:
+        if int(fields.get("src_mtime", "")) != src.stat().st_mtime_ns:
+            return False
+    except ValueError:
+        return False
+    source_size = fields.get("source_size")
+    if source_size is not None:
+        try:
+            return int(source_size) == src.stat().st_size
+        except ValueError:
+            return False
+    return True
 
 
 def _output_candidate_for_source(candidate: Path, src: Path) -> bool:
@@ -172,7 +191,8 @@ def marker_line(src: Path, backend: str) -> str:
     return (
         f"{MARKER_PREFIX}{__version__} | "
         f"source: {src.name} | source_id: {_source_id(src)} | "
-        f"src_mtime: {stat.st_mtime_ns} | mtime: {mtime} | backend: {backend} -->"
+        f"src_mtime: {stat.st_mtime_ns} | source_size: {stat.st_size} | "
+        f"mtime: {mtime} | backend: {backend} -->"
     )
 
 
@@ -203,7 +223,7 @@ def is_up_to_date(src: Path, md: Path) -> bool:
     if ver[0] != cur_major:
         return False
     fields = _parse_marker_fields(first)
-    if fields.get("source_id") != _source_id(src):
+    if not _marker_fields_match_source(fields, src):
         return False
     try:
         if int(fields.get("src_mtime", "")) != src.stat().st_mtime_ns:
