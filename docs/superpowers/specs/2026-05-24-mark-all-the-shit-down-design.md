@@ -3,7 +3,7 @@
 **Дата:** 2026-05-24
 **Статус:** утверждено к реализации
 **Версия скилла:** v0.1.0
-**Базис:** форк `mark-the-shit-down` v0.1.1
+**Базис:** форк `mark-the-shit-down` v0.2.0
 
 ---
 
@@ -79,7 +79,7 @@ mark-all-the-shit-down/
 | Стр. | Что | Было | Стало |
 |---|---|---|---|
 | 2 | docstring модуля | `"""mark-the-stuff-down - convert office docs to Markdown."""` | `"""mark-all-the-shit-down - convert office docs to Markdown (with OCR)."""` |
-| 11 (рядом) | `__version__` | `"0.1.1"` | `"0.1.0"` (форк начинает свою нумерацию) |
+| 11 (рядом) | `__version__` | `"0.2.0"` | `"0.1.0"` (форк начинает свою нумерацию) |
 | 23 | `MARKER_PREFIX` | `"<!-- mark-the-stuff-down v"` | `"<!-- mark-all-the-shit-down v"` |
 | 147 | `marker_line()` — **хардкод, не читает `MARKER_PREFIX`** | `f"<!-- mark-the-stuff-down v{__version__} | "` | `f"{MARKER_PREFIX}{__version__} | "` (перевести на константу) |
 | 1043 | CLI `--version` | `f"mark-the-stuff-down {__version__}"` | `f"mark-all-the-shit-down {__version__}"` |
@@ -94,7 +94,7 @@ mark-all-the-shit-down/
 
 **Grep-инварианты** после применения диффа (проверяются в тестах `test_marker_prefix`, `test_grep_no_old_name` + явный `grep`-шаг в CI):
 
-1. `grep -n "mark-the-stuff-down\|0.1.1" convert.py` — должен возвращать пусто (старое имя скилла + старая версия).
+1. `grep -n "mark-the-stuff-down\|0.2.0" convert.py` — должен возвращать пусто (старое имя скилла + старая версия upstream).
 2. `grep -n "mark-the-shit-down" convert.py` — должен возвращать пусто (старый repo slug; **не путать** с новым именем `mark-all-the-shit-down`, в котором `mark-the-shit-down` не является подстрокой). Применяется **только** к `convert.py`, так как в других файлах репо (документация, история коммитов, сравнение с upstream) законные упоминания старого репо допустимы.
 
 Чтобы grep корректно отличал старый slug от нового имени, использовать `grep -E "(^|[^-])mark-the-shit-down"` или эквивалентный `\bmark-the-shit-down\b` — слово `mark-all-the-shit-down` не должно матчиться.
@@ -334,7 +334,7 @@ done
 - `test_scanned_pdf_no_longer_errors` — проверить, что `ConversionError("scanned-pdf", ...)` больше не возбуждается.
 - `test_marker_prefix` — проверить, что cache-маркер (через реальный вызов `marker_line()`) содержит `mark-all-the-shit-down` и **не** содержит `mark-the-stuff-down` ни в одной строке. Это покрывает п. строки 147 в convert.py (хардкод `marker_line()` — основной риск регрессии).
 - `test_webp_pillow_fallback` — юнит/интеграция: если Pillow доступен, маленький `.webp` конвертируется без ошибки; если Pillow отсутствует (моки или фейк-import), возбуждается `ConversionError("install-failed", ...)`.
-- `test_grep_no_old_name` — runtime-grep по содержимому `convert.py`: подстроки `mark-the-stuff-down` и `0.1.1` не встречаются (инвариант из секции «диффы»).
+- `test_grep_no_old_name` — runtime-grep по содержимому `convert.py`: подстроки `mark-the-stuff-down` и `0.2.0` не встречаются (инвариант из секции «диффы»).
 
 Интеграционные тесты, требующие реального `tesseract`, помечаются `@pytest.mark.ocr` и скипаются, если бинарь недоступен.
 
