@@ -22,7 +22,7 @@ def test_marker_line_contains_version_and_mtime(tmp_path):
     src = tmp_path / "Договор.pdf"
     src.write_bytes(b"%PDF-1.4 test")
     line = cv.marker_line(src, backend="pdfplumber")
-    assert line.startswith(f"<!-- mark-all-the-shit-down v{cv.__version__} |")
+    assert line.startswith(f"<!-- mark-all-the-stuff-down v{cv.__version__} |")
     assert "source: Договор.pdf" in line
     assert f"source_id: {cv._source_id(src)}" in line
     assert "backend: pdfplumber" in line

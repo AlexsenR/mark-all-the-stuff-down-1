@@ -22,6 +22,7 @@ def test_install_ps1_links_skill_with_junction():
     text = INSTALL_PS1.read_text(encoding="utf-8")
     assert "New-Item" in text
     assert "Junction" in text
+    assert "mark-all-the-stuff-down" in text
     assert "mark-all-the-shit-down" in text
 
 

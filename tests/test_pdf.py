@@ -68,7 +68,7 @@ def test_dispatch_pdf_scanned_converts_via_ocr(run_convert, tmp_copy):
     md = src.with_suffix(".md")
     body = md.read_text(encoding="utf-8")
     first = body.splitlines()[0]
-    assert first.startswith("<!-- mark-all-the-shit-down v0.1.0 ")
+    assert first.startswith("<!-- mark-all-the-stuff-down v0.1.0 ")
     assert "backend: tesseract-ocr" in first
     assert "## Page 1" in body
 

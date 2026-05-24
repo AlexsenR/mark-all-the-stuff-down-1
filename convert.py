@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""mark-all-the-shit-down - convert office docs to Markdown (with OCR)."""
+"""mark-all-the-stuff-down - convert office docs to Markdown (with OCR)."""
 from __future__ import annotations
 
 import argparse
@@ -21,7 +21,7 @@ from enum import Enum
 from pathlib import Path
 
 __version__ = "0.1.0"
-MARKER_PREFIX = "<!-- mark-all-the-shit-down v"
+MARKER_PREFIX = "<!-- mark-all-the-stuff-down v"
 MAX_BYTES = 50_000_000  # 50 MB (decimal: 1 KB = 1000 bytes)
 PROBE_PAGES = 3
 SCANNED_PDF_TEXT_THRESHOLD = 50  # chars/page average
@@ -1257,7 +1257,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("paths", nargs="*", help="absolute path(s) to source document(s)")
     p.add_argument(
-        "--version", action="version", version=f"mark-all-the-shit-down {__version__}"
+        "--version", action="version", version=f"mark-all-the-stuff-down {__version__}"
     )
     p.add_argument(
         "--no-uv",

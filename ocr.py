@@ -1,4 +1,4 @@
-"""OCR backend for mark-all-the-shit-down.
+"""OCR backend for mark-all-the-stuff-down.
 
 Self-contained: depends only on stdlib, the bundled tessdata/, the system
 `tesseract` and `pdftoppm` binaries, and (for .webp) a runtime-imported PIL.

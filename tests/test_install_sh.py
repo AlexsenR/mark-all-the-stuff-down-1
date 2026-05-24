@@ -21,7 +21,7 @@ def test_install_sh_exists_executable_and_posix_syntax():
 def test_install_sh_dry_run_creates_skill_link(tmp_path, monkeypatch):
     target_dir = tmp_path / "fakeclaude" / "skills"
     target_dir.mkdir(parents=True)
-    stale_dest = tmp_path / ".local" / "share" / "mark-all-the-shit-down"
+    stale_dest = tmp_path / ".local" / "share" / "mark-all-the-stuff-down"
     (stale_dest / "tests").mkdir(parents=True)
     (stale_dest / ".git").mkdir()
     monkeypatch.setenv("HOME", str(tmp_path))
@@ -32,7 +32,7 @@ def test_install_sh_dry_run_creates_skill_link(tmp_path, monkeypatch):
     r = subprocess.run(["sh", str(INSTALL), "--no-uv"], capture_output=True, text=True)
 
     assert r.returncode == 0, r.stderr
-    link = target_dir / "mark-all-the-shit-down"
+    link = target_dir / "mark-all-the-stuff-down"
     assert link.exists()
     assert link.is_symlink()
     assert (link / "convert.py").is_file()

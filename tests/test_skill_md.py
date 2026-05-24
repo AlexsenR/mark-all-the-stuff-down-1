@@ -13,7 +13,7 @@ def test_skill_md_frontmatter_has_name_and_paths():
     assert text.startswith("---\n"), "must start with YAML frontmatter"
     end = text.index("\n---\n", 4)
     fm = text[4:end]
-    assert "name: mark-all-the-shit-down" in fm
+    assert "name: mark-all-the-stuff-down" in fm
     for ext in (
         ".docx",
         ".pdf",

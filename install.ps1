@@ -20,7 +20,7 @@ function Assert-ExitCode {
 $NoUvFlag = $NoUv.IsPresent -or ($args -contains "--no-uv")
 $DryRun = $env:MTSD_DRY_RUN -eq "1"
 $SourceOverride = $env:MTSD_SOURCE
-$Dest = Join-Path $HOME ".local\share\mark-all-the-shit-down"
+$Dest = Join-Path $HOME ".local\share\mark-all-the-stuff-down"
 $RuntimeFiles = @("convert.py", "ocr.py", "SKILL.md", "README.md", "LICENSE")
 
 function Install-RuntimeFromSource {
@@ -111,7 +111,7 @@ if (-not $NoUvFlag -and -not (Get-Command uv -ErrorAction SilentlyContinue) -and
 
 foreach ($d in $candidates) {
   New-Item -ItemType Directory -Force -Path $d | Out-Null
-  $target = Join-Path $d "mark-all-the-shit-down"
+  $target = Join-Path $d "mark-all-the-stuff-down"
   if (Test-Path $target) {
     Remove-Item -Recurse -Force $target
   }
@@ -162,4 +162,4 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
   }
 }
 
-Write-Host "mark-all-the-shit-down installed"
+Write-Host "mark-all-the-stuff-down installed"

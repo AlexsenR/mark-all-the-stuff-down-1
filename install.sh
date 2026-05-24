@@ -37,7 +37,7 @@ esac
 
 DRY_RUN=${MTSD_DRY_RUN:-0}
 SOURCE_DIR=${MTSD_SOURCE:-}
-DEST=$HOME/.local/share/mark-all-the-shit-down
+DEST=$HOME/.local/share/mark-all-the-stuff-down
 RUNTIME_FILES="convert.py
 ocr.py
 SKILL.md
@@ -138,7 +138,7 @@ fi
 printf '%s\n' "$CANDIDATES" | while IFS= read -r d; do
   [ -n "$d" ] || continue
   mkdir -p "$d"
-  target=$d/mark-all-the-shit-down
+  target=$d/mark-all-the-stuff-down
   if [ -L "$target" ] || [ -e "$target" ]; then
     rm -rf "$target"
   fi
@@ -198,4 +198,4 @@ PY
   fi
 fi
 
-echo "mark-all-the-shit-down installed"
+echo "mark-all-the-stuff-down installed"

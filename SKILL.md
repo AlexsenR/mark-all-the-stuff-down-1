@@ -37,13 +37,13 @@ When the user attaches or references a binary office document or image and you n
 ## How to invoke
 
 ```sh
-python /path/to/mark-all-the-shit-down/convert.py "<absolute-path-to-document>"
+python /path/to/mark-all-the-stuff-down/convert.py "<absolute-path-to-document>"
 ```
 
 For multiple documents, pass all paths in one invocation; the converter runs them in parallel by default:
 
 ```sh
-python /path/to/mark-all-the-shit-down/convert.py --jobs 4 "<doc-1>" "<doc-2>" "<doc-3>"
+python /path/to/mark-all-the-stuff-down/convert.py --jobs 4 "<doc-1>" "<doc-2>" "<doc-3>"
 ```
 
 The script prints one stdout line per successfully converted file: `<abs-path-to-markdown> (<size>)`. Read those files with `Read` using `offset` and `limit`, or `grep` them. **Do not paste full documents into context.**
@@ -69,4 +69,4 @@ Surfacing an error is the terminal step for this skill. Resuming the original ta
 
 ## Re-runs
 
-Re-invoking on the same unchanged file is cheap: the script detects an existing up-to-date Markdown via an `<!-- mark-all-the-shit-down vX.Y -->` marker on the first line and returns the cached path.
+Re-invoking on the same unchanged file is cheap: the script detects an existing up-to-date Markdown via an `<!-- mark-all-the-stuff-down vX.Y -->` marker on the first line and returns the cached path.

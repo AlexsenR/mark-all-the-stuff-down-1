@@ -177,7 +177,7 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           staging=$(mktemp -d)
-          pkg="$staging/mark-all-the-shit-down"
+          pkg="$staging/mark-all-the-stuff-down"
           mkdir -p "$pkg"
           cp convert.py ocr.py SKILL.md LICENSE README.md "$pkg/"
           cp -R tessdata "$pkg/tessdata"
@@ -185,16 +185,16 @@ jobs:
                    tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
             test -f "$pkg/$f" || { echo "MISSING IN STAGING: $f"; exit 1; }
           done
-          (cd "$staging" && zip -r "mark-all-the-shit-down-${TAG_NAME}.skill" mark-all-the-shit-down)
-          mv "$staging/mark-all-the-shit-down-${TAG_NAME}.skill" dist/
-          cp "dist/mark-all-the-shit-down-${TAG_NAME}.skill" "dist/mark-all-the-shit-down-${TAG_NAME}.zip"
+          (cd "$staging" && zip -r "mark-all-the-stuff-down-${TAG_NAME}.skill" mark-all-the-stuff-down)
+          mv "$staging/mark-all-the-stuff-down-${TAG_NAME}.skill" dist/
+          cp "dist/mark-all-the-stuff-down-${TAG_NAME}.skill" "dist/mark-all-the-stuff-down-${TAG_NAME}.zip"
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/mark-all-the-shit-down-*.skill
-            dist/mark-all-the-shit-down-*.zip
+            dist/mark-all-the-stuff-down-*.skill
+            dist/mark-all-the-stuff-down-*.zip
 
   verify-bundle:
     name: verify-bundle
@@ -205,7 +205,7 @@ jobs:
         run: |
           set -euo pipefail
           staging=$(mktemp -d)
-          pkg="$staging/mark-all-the-shit-down"
+          pkg="$staging/mark-all-the-stuff-down"
           mkdir -p "$pkg"
           cp convert.py ocr.py SKILL.md LICENSE README.md "$pkg/"
           cp -R tessdata "$pkg/tessdata"
@@ -213,11 +213,11 @@ jobs:
                    tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
             test -f "$pkg/$f" || { echo "MISSING IN BUNDLE: $f"; exit 1; }
           done
-          (cd "$staging" && zip -qr bundle.zip mark-all-the-shit-down)
+          (cd "$staging" && zip -qr bundle.zip mark-all-the-stuff-down)
           unzip -q "$staging/bundle.zip" -d "$staging/unpacked"
           for f in convert.py ocr.py SKILL.md LICENSE README.md \
                    tessdata/rus.traineddata tessdata/eng.traineddata tessdata/osd.traineddata; do
-            test -f "$staging/unpacked/mark-all-the-shit-down/$f" \
+            test -f "$staging/unpacked/mark-all-the-stuff-down/$f" \
               || { echo "MISSING AFTER ROUND-TRIP: $f"; exit 1; }
           done
           echo "Bundle OK"

@@ -53,7 +53,7 @@ def test_dispatch_docx_writes_md_with_marker(run_convert, tmp_copy):
     md = src.with_suffix(".md")
     assert md.is_file()
     first = md.read_text(encoding="utf-8").splitlines()[0]
-    assert first.startswith(f"<!-- mark-all-the-shit-down v{cv.__version__}")
+    assert first.startswith(f"<!-- mark-all-the-stuff-down v{cv.__version__}")
     assert "backend: python-docx" in first
     assert str(md) in r.stdout
 

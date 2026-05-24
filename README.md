@@ -1,4 +1,4 @@
-# mark-all-the-shit-down
+# mark-all-the-stuff-down
 
 Лёгкий конвертер офисных документов и изображений в Markdown — скилл для AI-агентов (Claude Code, Codex CLI, pi.dev, Claude.ai).
 
@@ -36,7 +36,7 @@ irm https://raw.githubusercontent.com/strigov/mark-all-the-shit-down/main/instal
 
 Установщик кладёт в каталог скилла только runtime-файлы (`SKILL.md`, `convert.py`, `ocr.py`, `README.md`, `LICENSE`, `tessdata/`). Тесты, fixtures и dev-файлы остаются только в репозитории.
 
-**Claude.ai (UI):** скачать последний `mark-all-the-shit-down-vX.Y.Z.skill` из [Releases](https://github.com/strigov/mark-all-the-shit-down/releases) и загрузить в Settings -> Capabilities -> Skills.
+**Claude.ai (UI):** скачать последний `mark-all-the-stuff-down-vX.Y.Z.skill` из [Releases](https://github.com/strigov/mark-all-the-shit-down/releases) и загрузить в Settings -> Capabilities -> Skills.
 
 ## Использование
 

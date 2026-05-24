@@ -11,8 +11,8 @@ def test_marker_prefix_uses_new_name(tmp_path):
     f = tmp_path / "doc.pdf"
     f.write_bytes(b"fake")
     line = convert.marker_line(f, "text")
-    assert line.startswith("<!-- mark-all-the-shit-down v0.1.0")
-    assert "mark-the-stuff-down" not in line
+    assert line.startswith("<!-- mark-all-the-stuff-down v0.1.0")
+    assert "shit" not in line
     assert f"v{convert.__version__}" in line
 
 
