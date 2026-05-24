@@ -1,5 +1,5 @@
 ---
-name: mark-all-the-shit-down
+name: mark-all-the-stuff-down
 description: |
   Конвертирует офисные документы (.docx, .pdf, .xlsx, .xls, .pptx, .rtf, .html, .epub)
   и изображения (.png, .jpg, .jpeg, .tiff, .tif, .bmp, .webp) в Markdown для
@@ -28,7 +28,7 @@ paths:
   - "*.webp"
 ---
 
-# mark-all-the-shit-down
+# mark-all-the-stuff-down
 
 ## When to invoke
 
